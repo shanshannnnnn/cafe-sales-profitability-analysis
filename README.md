@@ -49,7 +49,20 @@ Five source tables, related into a star schema:
 | **Operating Costs** | 58 | Op Month, Location, Rental Cost, Staff Salaries, Utility Expenses |
 | **Academic Calendar** | 547 | Semester, Week, Date, Weekday Attribute |
 
+![Data model](docs/images/data-model.png)
+
 Two joins do most of the analytical work.
+
+**Operating Costs → Sales** needed a **composite key**. Costs are recorded per
+month *per outlet*, so neither date nor location alone identifies a row — the
+model joins on a derived `Mth-Yr-Loc` key combining both. Without it, rent
+belonging to one outlet would spread across all three and every per-outlet profit
+figure would be wrong.
+
+The sales table also carries derived columns — `Date only`, `Day Name`, `Hour`,
+plus `Category` and `Cost` brought across from the price list. `Hour` and
+`Day Name` are what make the peak-hour and weekday analyses possible at all,
+since the raw data holds only a full timestamp.
 
 **Menu Prices → Sales** turns quantities into money. Because the workbook holds
 *two* price lists — October 2022 and October 2023 — the same basket can be costed
