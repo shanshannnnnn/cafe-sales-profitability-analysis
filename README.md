@@ -87,6 +87,8 @@ footfall business, not a basket-size one.
 
 ![Sales target variance](docs/images/sales-target-variance.png)
 
+October 2023 semester, against the $500k target:
+
 | Outlet | Revenue | Variance | % of target |
 |---|---:|---:|---:|
 | Makan Place | $495.05K | −$4.95K | 99.0% |
@@ -127,7 +129,13 @@ from target.
 After 14:00 all three decline steadily for six hours. The outlets are staffed and
 rented for a 13-hour day to serve what is effectively a 2-hour rush.
 
-### The cost base doesn't flex
+### The cost base doesn't flex — and five months it swallowed the business
+
+![Fixed vs variable costs by month](docs/images/fixed-vs-variable-costs.png)
+
+This is the clearest chart in the report. **Fixed costs are a dead-flat $36K every
+single month** across all 19 months. Variable cost — ingredients, the only
+component that tracks demand — swings from **$18K to $149K**, a factor of eight.
 
 | Cost | Amount | Type |
 |---|---:|---|
@@ -136,13 +144,45 @@ rented for a 13-hour day to serve what is effectively a 2-hour rush.
 | Rental | $231.80K | Fixed |
 | Utilities | $26.82K | Fixed |
 
-**$703K of the $1.92M cost base — 37% — is fixed**, incurred whether anyone
-turns up or not. A quiet Wednesday costs nearly as much to run as a peak Tuesday
-while producing 55% of the transactions.
+**$703K of the $1.92M cost base — 37% — is fixed**, incurred whether anyone turns
+up or not.
 
-That's what makes filling quiet periods more valuable than trimming costs: with a
-~50% gross margin on goods, incremental off-peak covers contribute directly to
-fixed costs that are already being paid.
+In **five of nineteen months** — October and December 2022, March and September
+2023, and April 2024 — the outlets spent *more on rent, staff and utilities than
+on the food they actually sold.* March 2023 is the extreme: $36K fixed against
+$18K variable, paying double in overheads what the kitchen turned over. Those
+months line up with vacation periods, when the campus empties but the lease
+doesn't pause.
+
+The same logic scales down to a single day. A quiet Wednesday carries full rent
+and full staffing while producing 55% of the transactions. That's what makes
+filling quiet periods more valuable than trimming costs: with a ~50% gross margin
+on goods, incremental off-peak covers contribute directly to fixed costs that are
+already being paid.
+
+### Growth came from price as much as volume
+
+![Menu and outlet analysis](docs/images/menu-and-outlet-analysis.png)
+
+The October 2023 price revision lifted the average menu price from **$6.08 to
+$6.94 — a 14.1% increase**. Any revenue growth across that boundary therefore has
+to be split between selling more and charging more, which is exactly what having
+both price lists in the model allows.
+
+Revenue share across all three semesters:
+
+| Outlet | Revenue | Share |
+|---|---:|---:|
+| Makan Place | $971.91K | 40.1% |
+| Food Club 22 | $862.22K | 35.5% |
+| Munch | $591.89K | 24.4% |
+
+**Drinks dominate volume.** Three of the top four sellers are beverages — Java
+Chip Frappuccino (43K units), Almondmilk Mocha Frappuccino (41K) and Soymilk Pure
+Matcha Latte (30K) — with Chicken Ham & Egg Bagel (34K) the only food item near
+the top. That matters for the discount proposal: beverages carry the better
+margins, so a drinks-led Wednesday promotion costs less per unit of footfall than
+discounting the whole menu.
 
 ## Recommendations
 
@@ -168,6 +208,13 @@ assumed.
   data, so the break-even uplift — how many extra covers the discount must
   generate to pay for itself — is computable, and would turn a suggestion into a
   business case.
+- **Separate price growth from volume growth.** Both price lists are in the model
+  and the average price rose 14.1%, but the report reports revenue without
+  decomposing it. Holding volume constant and re-pricing at the old list would
+  isolate how much of the increase was real demand.
+- **Address the vacation months.** The five months where fixed cost exceeded
+  variable cost are a larger structural problem than Wednesday, and the report
+  charts them without drawing the conclusion.
 - **Target the intervention by outlet.** Munch carries 71% of the shortfall. The
   recommendations apply campus-wide when the evidence points at one outlet.
 - **Three pages share the name "Task 2."** They should be named for what they show.
