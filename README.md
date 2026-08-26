@@ -1,18 +1,24 @@
 # Campus Café Sales & Profitability Analysis — Power BI
 
-An 11-page Power BI report analysing **~315,000 transaction records** across three
-campus food outlets over three semesters, joining point-of-sale data to menu
-costs, monthly operating costs and an academic calendar to answer a single
-business question: how do these outlets raise revenue enough to hit a **$500,000
+An 11-page Power BI report analysing **144,780 transactions** and **372,591 items
+sold** across three campus food outlets over three semesters. Point-of-sale data
+is joined to menu costs, monthly operating costs and an academic calendar to
+answer one business question: how do these outlets close the gap to a **$500,000
 per semester** sales target?
 
-The analysis identifies where each outlet loses ground — a specific weekday, a
-specific time of day, and a cost structure that doesn't flex with demand — and
-recommends targeted interventions rather than blanket discounting.
+The analysis finds that the shortfall isn't spread evenly — it concentrates in a
+single weekday, driven by the teaching timetable rather than by anything the
+outlets are doing wrong.
 
-<!-- IMAGE: add docs/images/dashboard-overview.png, then uncomment
 ![Dashboard overview](docs/images/dashboard-overview.png)
--->
+
+| | |
+|---|---|
+| **Total revenue** | $2.43M |
+| **Total costs** | $1.92M |
+| **Total profit** | $506.31K *(20.8% margin)* |
+| **Transactions** | 144,780 |
+| **Items sold** | 372,591 *(2.57 per order)* |
 
 ---
 
@@ -26,13 +32,13 @@ recommends targeted interventions rather than blanket discounting.
 
 Three outlets — **Makan Place**, **Food Club 22** and **Munch** — operate on the
 same campus, serve overlapping menus, and are each measured against a $500k
-per-semester sales target. They share a customer base whose presence is dictated
+per-semester target. They share a customer base whose presence is dictated
 entirely by a timetable, which makes demand highly predictable *if* you model it
-against the academic calendar rather than the ordinary calendar.
+against the academic calendar rather than the ordinary one.
 
 ## Data model
 
-Five source tables, related into a star-ish model:
+Five source tables, related into a star schema:
 
 | Table | Rows | Contents |
 |---|---:|---|
@@ -41,23 +47,21 @@ Five source tables, related into a star-ish model:
 | **Sales — Oct 2023** | 150,444 | as above |
 | **Menu Prices** (Oct 22 & Oct 23) | 21 items each | Category, Menu Item, **Cost**, **Price** |
 | **Operating Costs** | 58 | Op Month, Location, Rental Cost, Staff Salaries, Utility Expenses |
-| **Academic Calendar** | 547 | Semester, Week, Date, Weekday Attribute (e.g. School Day) |
+| **Academic Calendar** | 547 | Semester, Week, Date, Weekday Attribute |
 
-Two joins do most of the analytical work:
+Two joins do most of the analytical work.
 
 **Menu Prices → Sales** turns quantities into money. Because the workbook holds
 *two* price lists — October 2022 and October 2023 — the same basket can be costed
 at both, which is what makes the **price-adjustment comparison** possible: how
-much of the revenue change is more items sold, and how much is simply higher
-prices?
+much of the revenue change came from selling more, and how much simply from
+charging more?
 
 **Academic Calendar → Sales** is the join that makes the findings interpretable.
 A raw date tells you a Wednesday was quiet. A date joined to a semester, teaching
 week and school-day flag tells you *why*.
 
 ## Measures
-
-Built across the sales and cost tables:
 
 | Measure | Purpose |
 |---|---|
@@ -74,99 +78,123 @@ Built across the sales and cost tables:
 
 Separating **transactions** from **items sold** matters more than it looks: it
 distinguishes *fewer customers* from *customers buying less*, and those two
-problems have completely different fixes.
+problems have completely different fixes. At 2.57 items per order, this is a
+footfall business, not a basket-size one.
 
-## Report structure
+## Findings
 
-| # | Page | What it answers |
-|---:|---|---|
-| 1 | Metrics Verification | Nine KPI cards reconciling revenue, costs and profit — a check that every measure ties out before any conclusion rests on it |
-| 2 | Problem Statement | Objective and driving question |
-| 3 | Menu & Outlet Analysis | Top 10 items by volume, sales share per outlet, average menu price before vs after adjustment |
-| 4 | Revenue & Profit by Month | Monthly revenue and profit per outlet, with period totals |
-| 5 | Sales Trend | Items sold by month and **by hour**, filterable by weekday |
-| 6 | Specific Analysis | A single item's performance across semesters, and Eat-In vs Delivery mix |
-| 7 | Cost Impact | Fixed vs variable cost split |
-| 8 | Profitability | Profit per outlet across semesters |
-| 9 | Peak Hour | Transactions by hour of day, per outlet |
-| 10 | Sales Target | Revenue and variance against the $500k/semester target, per outlet |
-| 11 | Recommendations | Transactions by weekday, and the resulting proposals |
+### Every outlet misses the target — but by wildly different margins
 
-<!-- IMAGES: see docs/images/README.md for the list of screenshots to add. -->
+![Sales target variance](docs/images/sales-target-variance.png)
 
-## Key findings
+| Outlet | Revenue | Variance | % of target |
+|---|---:|---:|---:|
+| Makan Place | $495.05K | −$4.95K | 99.0% |
+| Food Club 22 | $429.47K | −$70.53K | 85.9% |
+| Munch | $313.59K | −$186.41K | 62.7% |
 
-**Wednesday is the weakest trading day.** Transactions by day of week show a clear
-Wednesday trough. Joined against the academic calendar, the cause is structural
-rather than commercial — most students have no timetabled lessons that day, so
-they simply aren't on campus. No amount of menu or service improvement fixes a
-day when the customers are elsewhere.
+Makan Place is within 1% of target. **Munch misses by 37%** — and $186K of the
+combined $262K shortfall sits with that one outlet. A blanket campus-wide
+intervention would therefore be aimed mostly at outlets that don't need it.
 
-**Demand is concentrated in hours, not spread across the day.** The hourly
-transaction profile is sharply peaked, which is what drives the cost problem
-below.
+### Wednesday is a structural hole, not a bad day
 
-**The cost structure doesn't flex.** Rental, staff salaries and utilities are
-fixed monthly commitments, while ingredient cost is the only component that
-tracks demand. On a quiet day the outlet still pays full rent and full staffing —
-so a low-traffic Wednesday costs nearly as much to run as a peak Monday. That is
-precisely why the recommendations target *filling* quiet periods rather than
-cutting costs.
+![Transactions by day of week](docs/images/weekday-transactions.png)
 
-**Price adjustment vs volume.** Comparing average menu price before and after the
-October 2023 revision separates revenue growth driven by price from growth driven
-by genuine volume.
+| Tuesday | Thursday | Friday | Monday | **Wednesday** |
+|---:|---:|---:|---:|---:|
+| 33K | 33K | 32K | 29K | **18K** |
+
+Wednesday runs at **55% of a typical Tuesday** — a 45% drop, far outside the
+variation between the other four days, which sit within 12% of each other.
+
+Joined against the academic calendar, the cause is structural rather than
+commercial: most students have no timetabled lessons on Wednesday, so they aren't
+on campus. No menu or service improvement fixes a day when the customers are
+somewhere else. Notably, the gap between Wednesday and the rest (~15K
+transactions per week) is the same order of magnitude as the revenue shortfall.
+
+### Demand is a spike, not a plateau
+
+![Transactions by hour](docs/images/peak-hour.png)
+
+Trading runs 07:00–20:00, but transactions concentrate almost entirely into
+**12:00–13:00**, where Makan Place peaks near 7.9K and Food Club 22 near 6.7K —
+roughly triple the mid-morning level. Munch peaks an hour later at 13:00 and
+stays the lowest of the three all day, consistent with it also being furthest
+from target.
+
+After 14:00 all three decline steadily for six hours. The outlets are staffed and
+rented for a 13-hour day to serve what is effectively a 2-hour rush.
+
+### The cost base doesn't flex
+
+| Cost | Amount | Type |
+|---|---:|---|
+| Ingredients | $1.22M | Variable — scales with demand |
+| Staff salaries | $444.60K | Fixed |
+| Rental | $231.80K | Fixed |
+| Utilities | $26.82K | Fixed |
+
+**$703K of the $1.92M cost base — 37% — is fixed**, incurred whether anyone
+turns up or not. A quiet Wednesday costs nearly as much to run as a peak Tuesday
+while producing 55% of the transactions.
+
+That's what makes filling quiet periods more valuable than trimming costs: with a
+~50% gross margin on goods, incremental off-peak covers contribute directly to
+fixed costs that are already being paid.
 
 ## Recommendations
 
-From the analysis, two interventions aimed directly at the Wednesday trough:
+> From the graph above we can see that the sales on Wednesday is the least as most
+> student do not have lessons on that day. A solution for this is special
+> promotions can be made on that day for example 30% off menu items to attract
+> students from SIM and SUSS. Another idea is to set up Grab food or Food Panda so
+> that students can order from home and not come all the way to school. I believe
+> that these ideas will help each cafe outlet hit its $500k sales target for every
+> semester.
 
-**1. Wednesday promotions.** Sales are lowest on Wednesday because most students
-have no lessons that day. A targeted promotion — for example 30% off menu items —
-would draw students from nearby institutions who otherwise wouldn't make the trip.
-Because fixed costs are incurred regardless, additional Wednesday volume at a
-discount still contributes toward covering them.
-
-**2. Delivery platforms.** Listing on GrabFood or Foodpanda removes the trip
-entirely, letting the outlets capture demand from students who are at home. The
-existing data already shows a Delivery transaction mode, so the demand pattern
-can be measured rather than assumed.
-
-Together these target the specific gap between current revenue and the $500k
-per-semester target, rather than trying to lift every day uniformly.
+Both interventions target the Wednesday trough specifically rather than lifting
+every day uniformly, and both work with the cost structure: because fixed costs
+are incurred regardless, additional Wednesday volume — even discounted — still
+contributes toward covering them. The dataset already records a Delivery
+transaction mode, so the delivery demand pattern can be measured rather than
+assumed.
 
 ## What I'd do differently
 
-- **Quantify the recommendations.** The report identifies the Wednesday trough but
-  doesn't model what a 30% discount does to margin. Since ingredient cost per item
-  is in the data, the break-even uplift — how many extra covers a 30% discount must
-  generate to be worth running — is computable and would make the proposal far more
-  persuasive.
-- **Three pages share the name "Task 2".** They should be named for what they show.
-- **No forecasting.** Three semesters of data supports a trend projection against
-  the target rather than only reporting historical variance.
-- **Basket analysis untouched.** Order ID groups items into baskets, so which items
-  sell together — and therefore what to bundle in a promotion — is available in the
-  data but unexplored.
+- **Quantify the discount.** The report identifies the Wednesday trough but
+  doesn't model what 30% off does to margin. Ingredient cost per item is in the
+  data, so the break-even uplift — how many extra covers the discount must
+  generate to pay for itself — is computable, and would turn a suggestion into a
+  business case.
+- **Target the intervention by outlet.** Munch carries 71% of the shortfall. The
+  recommendations apply campus-wide when the evidence points at one outlet.
+- **Three pages share the name "Task 2."** They should be named for what they show.
+- **No forecasting.** Three semesters supports a trend projection against the
+  target rather than only reporting historical variance.
+- **Basket analysis untouched.** Order ID groups items into baskets, so which
+  items sell together — and therefore what to bundle into a promotion — is
+  available but unexplored.
 - **Weekday Attribute underused.** The calendar distinguishes school days from
-  non-school days, which would sharpen the Wednesday finding into a general model
-  of demand versus campus presence.
+  non-school days, which would generalise the Wednesday finding into a model of
+  demand versus campus presence.
 
 ## Technologies
 
 **BI** — Microsoft Power BI Desktop (data model, DAX measures, interactive report)
-**Modelling** — Star schema, relationships across sales, price, cost and calendar tables
-**Source data** — Excel workbook, seven sheets
+**Modelling** — Star schema across sales, price, cost and calendar tables
+**Source data** — Excel workbook, seven sheets, ~315,000 rows
 **Visuals** — KPI cards, clustered column & bar charts, line charts, donut chart, tables, slicers
 
 ## A note on the data
 
 The source dataset and the `.pbix` file are **not published in this repository.**
 The data was provided for the assignment and its licensing does not permit
-redistribution, and the `.pbix` embeds the full ~315,000-row model inside it.
+redistribution, and the `.pbix` embeds the full model inside it.
 
 The schema, measures and findings are documented above so the analysis is fully
-legible without it.
+legible without them.
 
 ## License
 
