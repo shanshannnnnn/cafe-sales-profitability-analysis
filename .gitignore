@@ -1,0 +1,17 @@
+# ---- Source data and report file -----------------------------------------
+# The dataset was provided for the assignment and is not redistributable.
+# The .pbix embeds the full ~315k-row model, so it is excluded for the same
+# reason. See the "A note on the data" section of the README.
+*.pbix
+*.xlsx
+*.xls
+*.csv
+data/
+dataset/
+
+# ---- Editors / OS ---------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
